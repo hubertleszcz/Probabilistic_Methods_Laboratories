@@ -1,0 +1,2 @@
+Zad. 1
+Paris Marseille Lyon Toulouse Nice Nantes Montpellier Bordeaux Lille Strasbourg
