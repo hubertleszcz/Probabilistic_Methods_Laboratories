@@ -1,2 +1,5 @@
 Zad. 1
-Paris Marseille Lyon Toulouse Nice Nantes Montpellier Bordeaux Lille Strasbourg
+Paris Nantes Bordeaux Toulouse Montpellier Marseille Nice Lyon Lille Strasbourg 25.3425
+
+Zad. 2
+Marseille Lyon Toulouse Nice Nantes 2506

@@ -26,13 +26,23 @@ bool isInVector(int a, vector <int> vector) {
 	return false;
 }
 
+void sortVector(vector <int> &vec) {
+	for (int i = 0; i < vec.size(); i++) {
+		for (int j = i + 1; j < vec.size(); j++) {
+			if (vec[i] > vec[j]) swap(vec[i], vec[j]);
+		}
+	}
+}
+
 
 class Generator {
 private:
 	vector <int> data;
 	vector<vector<int>> permutations;
+	vector<vector<int>> combinations;
 	int dataSize;
 	Town* towns;
+	int combinationSize;
 public:
 	Generator(int dataSize, vector <int> data) {
 		this->dataSize = dataSize;
@@ -72,7 +82,7 @@ public:
 			double currentDist = 0;
 			currentDist += towns[currentPermutation[0]-1].CalculateDistance(towns[currentPermutation[currentPermutation.size() - 1]-1]);
 			for (int i = 0; i < currentPermutation.size()-1; i++) {
-				currentDist += towns[currentPermutation[i]-1].CalculateDistance(towns[currentPermutation[i]-1]);
+				currentDist += towns[currentPermutation[i]-1].CalculateDistance(towns[currentPermutation[i+1]-1]);
 
 			}
 			if (currentDist < wynik) {
@@ -85,6 +95,71 @@ public:
 		}
 		cout << wynik;
 	}
+
+	bool vectorsSame(vector <int> first, vector<int> second) {
+		for (int i = 0; i < first.size(); i++) {
+			if (first[i] != second[i]) return false;
+		}
+
+		return true;
+	}
+
+	bool comboExists(vector <int> toCheck, vector<vector<int>> combos) {
+		for (int i = 0; i < combos.size(); i++) {
+			auto currentCombo = combos[i];
+			if (vectorsSame(toCheck, currentCombo)) return true;
+		}
+		return false;
+	}
+
+	void generateCombinations(int comboSize) {
+		for (int i = 0; i < permutations.size(); i++) {
+			auto current = permutations[i];
+			vector<int> currentCombo;
+			for (int i = 0; i < comboSize; i++) currentCombo.push_back(current[i]);
+			sortVector(currentCombo);
+			if (!comboExists(currentCombo, combinations)) combinations.push_back(currentCombo);
+		}
+
+	/*	for (int i = 0; i < combinations.size(); i++) {
+			for (int j = 0; j < combinations[i].size(); j++) {
+				cout << combinations[i][j] << " ";
+			}
+			cout << endl;
+		}*/
+	}
+
+	void findClosestToHalf() {
+		int neededValue = 0;
+		int closest = 0x7FFFFFFF;
+		int index = 0;
+		int wynik = 0;
+		for (int i = 0; i < this->dataSize; i++) {
+			neededValue += this->towns[i].citizens;
+		}
+		neededValue /= 2;
+		cout << neededValue << " ";
+
+		for (int i = 0; i < combinations.size(); i++) {
+			auto current = combinations[i];
+			int sum = 0;
+			for (int i = 0; i < current.size(); i++) {
+				sum += towns[current[i] - 1].citizens;
+			}
+			if (abs(sum - neededValue) < closest) {
+				closest = abs(sum - neededValue);
+				index = i;
+				wynik = sum;
+			}
+		}
+
+		for (int i = 0; i < combinations[index].size(); i++) {
+			cout << towns[combinations[index][i] - 1].name << " ";
+		}
+		cout << wynik;
+
+	}
+
 };
 
 int main() {
@@ -96,5 +171,7 @@ int main() {
 	Generator task1(N, tmpData);
 	vector<int> currentNumbers = vector<int>(N, N+1);
 	task1.generatePermutations(N, currentNumbers);
-	task1.findShortestRoute();
+	//task1.findShortestRoute();
+	task1.generateCombinations(N / 2);
+	task1.findClosestToHalf();
 }
